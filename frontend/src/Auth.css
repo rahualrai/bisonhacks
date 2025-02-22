@@ -1,0 +1,153 @@
+/* src/Auth.css */
+
+/* Basic resets & background */
+body {
+    margin: 0;
+    padding: 0;
+    font-family: 'Roboto', sans-serif;
+    background-color: #f1f3f4;
+  }
+  
+  /* Centered card container */
+  .auth-wrapper {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  /* The white card styling */
+  .auth-card {
+    background-color: #fff;
+    width: 400px;
+    max-width: 90%;
+    padding: 40px;
+    border-radius: 8px;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
+    text-align: center;
+  }
+  
+  /* Brand/Logo */
+  .brand {
+    margin-bottom: 1rem;
+    font-weight: 700;
+    font-size: 24px;
+    color: #4285f4;
+  }
+  
+  /* Headings */
+  .auth-title {
+    font-size: 24px;
+    margin: 0 0 8px;
+    color: #202124;
+  }
+  
+  .auth-subtitle {
+    font-size: 14px;
+    color: #5f6368;
+    margin-bottom: 24px;
+  }
+  
+  /* Form styling */
+  .auth-form {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  /* Input label and field */
+  .input-label {
+    display: flex;
+    flex-direction: column;
+    font-size: 14px;
+    color: #202124;
+    margin-bottom: 16px;
+  }
+  
+  .auth-input {
+    margin-top: 6px;
+    padding: 10px;
+    font-size: 16px;
+    border: 1px solid #dadce0;
+    border-radius: 4px;
+  }
+  
+  /* Submit button */
+  .auth-button {
+    background-color: #1a73e8;
+    color: #fff;
+    border: none;
+    outline: none;
+    font-size: 16px;
+    padding: 10px 0;
+    border-radius: 4px;
+    cursor: pointer;
+    margin-top: 16px;
+  }
+  
+  .auth-button:hover {
+    background-color: #1669c1;
+  }
+  
+  /* Google sign-in button */
+  .google-button {
+    background-color: #de5246;
+    margin: 8px auto 0;
+    padding: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+  }
+  
+  .google-button:hover {
+    background-color: #c7433d;
+  }
+  
+  /* Link styling */
+  .links-row {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 8px;
+  }
+  
+  .small-link {
+    color: #1a73e8;
+    text-decoration: none;
+    font-size: 13px;
+  }
+  
+  .small-link:hover {
+    text-decoration: underline;
+  }
+  
+  /* Footer styling */
+  .auth-footer {
+    display: flex;
+    justify-content: space-between;
+    width: 400px;
+    max-width: 90%;
+    margin-top: 16px;
+    font-size: 13px;
+    color: #5f6368;
+  }
+  
+  .auth-footer a {
+    color: #5f6368;
+    text-decoration: none;
+    margin-left: 16px;
+  }
+  
+  .auth-footer a:hover {
+    text-decoration: underline;
+  }
+  
+  .footer-left {
+    flex: 1;
+  }
+  
+  .footer-right {
+    display: flex;
+    gap: 16px;
+  }
+  
