@@ -1,30 +1,53 @@
 // src/components/ProfileForm.js
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { auth, db } from '../firebase';
-import { doc, setDoc } from 'firebase/firestore';
+import { doc, setDoc, getDoc } from 'firebase/firestore';
 import '../ProfileForm.css';
 
 const ProfileForm = () => {
   const navigate = useNavigate();
   const [profileData, setProfileData] = useState({
-    originCountry: '',
-    currentLivingCountry: '',
-    currentLivingState: '',
+    origin_country: '',
+    current_living_country: '',
+    current_living_state: '',
     race: '',
-    gpa: '',
+    gpa: '',           // will be converted to float on submit
     gender: '',
     major: '',
-    grade: '',
-    needMerit: '',
-    international: '',
-    usCitizen: '',
-    hbcu: '',
+    classification: '',
+    need_based_aid: '',  // radio value to be stored as boolean
+    merit_based_aid: '', // radio value to be stored as boolean
+    international: '',   // radio value to be stored as boolean
+    us_citizen: '',      // radio value to be stored as boolean
+    hbcu: '',            // radio value to be stored as boolean
   });
   const [submitting, setSubmitting] = useState(false);
 
+  // On mount, check if profile already exists for the current user
+  useEffect(() => {
+    const checkProfile = async () => {
+      const user = auth.currentUser;
+      if (user) {
+        const docSnap = await getDoc(doc(db, 'userProfiles', user.uid));
+        if (docSnap.exists()) {
+          navigate('/welcome');
+        }
+      }
+    };
+    checkProfile();
+  }, [navigate]);
+
+  // Handle change with type conversion for GPA and boolean fields
   const handleChange = (e) => {
-    const { name, value } = e.target;
+    let { name, value } = e.target;
+    if (name === 'gpa') {
+      value = parseFloat(value);
+    }
+    const booleanFields = ['need_based_aid', 'merit_based_aid', 'international', 'us_citizen', 'hbcu'];
+    if (booleanFields.includes(name)) {
+      value = e.target.value === 'true';
+    }
     setProfileData((prev) => ({ ...prev, [name]: value }));
   };
 
@@ -35,7 +58,7 @@ const ProfileForm = () => {
       const user = auth.currentUser;
       if (!user) throw new Error('User not logged in');
 
-      // Save the profile info in Firestore under "userProfiles"
+      // Save the profile info in Firestore under "userProfiles" with snake_case keys
       await setDoc(doc(db, 'userProfiles', user.uid), {
         ...profileData,
         uid: user.uid,
@@ -43,9 +66,9 @@ const ProfileForm = () => {
       setSubmitting(false);
       navigate('/welcome');
     } catch (error) {
-      console.error("Error during profile submission:", error);
+      console.error('Error during profile submission:', error);
       setSubmitting(false);
-      alert("Error: " + error.message);
+      alert('Error: ' + error.message);
     }
   };
 
@@ -58,8 +81,8 @@ const ProfileForm = () => {
             Origin Country
             <input
               type="text"
-              name="originCountry"
-              value={profileData.originCountry}
+              name="origin_country"
+              value={profileData.origin_country}
               onChange={handleChange}
               required
             />
@@ -69,8 +92,8 @@ const ProfileForm = () => {
             Current Living Country
             <input
               type="text"
-              name="currentLivingCountry"
-              value={profileData.currentLivingCountry}
+              name="current_living_country"
+              value={profileData.current_living_country}
               onChange={handleChange}
               required
             />
@@ -80,8 +103,8 @@ const ProfileForm = () => {
             Current Living State
             <input
               type="text"
-              name="currentLivingState"
-              value={profileData.currentLivingState}
+              name="current_living_state"
+              value={profileData.current_living_state}
               onChange={handleChange}
               required
             />
@@ -101,13 +124,15 @@ const ProfileForm = () => {
           <label>
             GPA
             <input
-              type="text"
+              type="number"
+              step="0.01"
               name="gpa"
               value={profileData.gpa}
               onChange={handleChange}
               required
             />
           </label>
+
 
           <label>
             Gender
@@ -119,10 +144,6 @@ const ProfileForm = () => {
               <label>
                 <input type="radio" name="gender" value="Female" onChange={handleChange} />
                 Female
-              </label>
-              <label>
-                <input type="radio" name="gender" value="Other" onChange={handleChange} />
-                Other
               </label>
             </div>
           </label>
@@ -139,43 +160,86 @@ const ProfileForm = () => {
           </label>
 
           <label>
-            Grade
+            Classification
             <input
               type="text"
-              name="grade"
-              value={profileData.grade}
+              name="classification"
+              value={profileData.classification}
               onChange={handleChange}
               required
             />
           </label>
 
           <label>
-            Need or Merit or Both
+            Require Need Based Aid
             <div className="radio-group">
               <label>
-                <input type="radio" name="needMerit" value="Need" onChange={handleChange} required />
-                Need
+                <input
+                  type="radio"
+                  name="need_based_aid"
+                  value="true"
+                  onChange={handleChange}
+                  required
+                />
+                Yes
               </label>
               <label>
-                <input type="radio" name="needMerit" value="Merit" onChange={handleChange} />
-                Merit
-              </label>
-              <label>
-                <input type="radio" name="needMerit" value="Both" onChange={handleChange} />
-                Both
+                <input
+                  type="radio"
+                  name="need_based_aid"
+                  value="false"
+                  onChange={handleChange}
+                />
+                No
               </label>
             </div>
           </label>
 
           <label>
-            International or not
+            Require Merit Based Aid
             <div className="radio-group">
               <label>
-                <input type="radio" name="international" value="Yes" onChange={handleChange} required />
+                <input
+                  type="radio"
+                  name="merit_based_aid"
+                  value="true"
+                  onChange={handleChange}
+                  required
+                />
                 Yes
               </label>
               <label>
-                <input type="radio" name="international" value="No" onChange={handleChange} />
+                <input
+                  type="radio"
+                  name="merit_based_aid"
+                  value="false"
+                  onChange={handleChange}
+                />
+                No
+              </label>
+            </div>
+          </label>
+
+          <label>
+            International
+            <div className="radio-group">
+              <label>
+                <input
+                  type="radio"
+                  name="international"
+                  value="true"
+                  onChange={handleChange}
+                  required
+                />
+                Yes
+              </label>
+              <label>
+                <input
+                  type="radio"
+                  name="international"
+                  value="false"
+                  onChange={handleChange}
+                />
                 No
               </label>
             </div>
@@ -185,11 +249,22 @@ const ProfileForm = () => {
             US Citizen
             <div className="radio-group">
               <label>
-                <input type="radio" name="usCitizen" value="Yes" onChange={handleChange} required />
+                <input
+                  type="radio"
+                  name="us_citizen"
+                  value="true"
+                  onChange={handleChange}
+                  required
+                />
                 Yes
               </label>
               <label>
-                <input type="radio" name="usCitizen" value="No" onChange={handleChange} />
+                <input
+                  type="radio"
+                  name="us_citizen"
+                  value="false"
+                  onChange={handleChange}
+                />
                 No
               </label>
             </div>
@@ -199,11 +274,22 @@ const ProfileForm = () => {
             HBCU/HSI
             <div className="radio-group">
               <label>
-                <input type="radio" name="hbcu" value="Yes" onChange={handleChange} required />
+                <input
+                  type="radio"
+                  name="hbcu"
+                  value="true"
+                  onChange={handleChange}
+                  required
+                />
                 Yes
               </label>
               <label>
-                <input type="radio" name="hbcu" value="No" onChange={handleChange} />
+                <input
+                  type="radio"
+                  name="hbcu"
+                  value="false"
+                  onChange={handleChange}
+                />
                 No
               </label>
             </div>
