@@ -1,8 +1,13 @@
 // src/components/Login_Page.js
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { signInWithEmailAndPassword, signInWithPopup, GoogleAuthProvider } from 'firebase/auth';
-import { auth } from '../firebase';
+import {
+  signInWithEmailAndPassword,
+  signInWithPopup,
+  GoogleAuthProvider,
+} from 'firebase/auth';
+import { doc, getDoc } from 'firebase/firestore';
+import { auth, db } from '../firebase';
 import { FaGoogle } from 'react-icons/fa';
 import '../Auth.css';
 
@@ -11,12 +16,21 @@ const Login_Page = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
+  const checkProfileExistsAndNavigate = async () => {
+    const user = auth.currentUser;
+    const profileDoc = await getDoc(doc(db, 'userProfiles', user.uid));
+    if (profileDoc.exists()) {
+      navigate('/welcome');
+    } else {
+      navigate('/profile');
+    }
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
       await signInWithEmailAndPassword(auth, email, password);
-      // Redirect to profile form to collect extra details
-      navigate('/profile');
+      await checkProfileExistsAndNavigate();
     } catch (error) {
       alert(error.message);
     }
@@ -26,7 +40,7 @@ const Login_Page = () => {
     const provider = new GoogleAuthProvider();
     try {
       await signInWithPopup(auth, provider);
-      navigate('/profile');
+      await checkProfileExistsAndNavigate();
     } catch (error) {
       alert(error.message);
     }
