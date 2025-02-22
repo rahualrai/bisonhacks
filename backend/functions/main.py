@@ -4,30 +4,56 @@ from firebase_functions import firestore_fn, https_fn
 # The Firebase Admin SDK to access Cloud Firestore.
 from firebase_admin import initialize_app, firestore
 import google.cloud.firestore
+import ollama
+from ollama import ChatResponse
 
 app = initialize_app()
 
 
 @https_fn.on_request()
-def addmessage(req: https_fn.Request) -> https_fn.Response:
-    """Take the text parameter passed to this HTTP endpoint and insert it into
-    a new document in the messages collection."""
+def askaboutscholarship(req: https_fn.Request) -> https_fn.Response:
     # Grab the text parameter.
-    original = req.args.get("text")
-    if original is None:
-        return https_fn.Response("No text parameter provided", status=400)
+    data = req.form
 
-    firestore_client: google.cloud.firestore.Client = firestore.client()
+    # try:
+    #     currentLivingCountry = data["currentLivingCountry"]
+    #     currentLivingState = data["currentLivingState"]
+    #     gender = data["gender"]
+    #     gpa = data["gpa"]
+    #     grade = data["grade"]
+    #     hbcu = data["hbcu"]
+    #     international = data["international"]
+    #     major = data["major"]
+    #     needMerit = data["needMerit"]
+    #     originCountry = data["originCountry"]
+    #     major = data["major"]
+    #     race = data["race"]
+    #     uid = data["uid"]
+    #     usCitizen = data["usCitizen"]
+    #     conversation = data["conversation"]
+    # except:
+    #     return https_fn.Response("Bad Request", status=400)
 
-    # Push the new message into Cloud Firestore using the Firebase Admin SDK.
-    _, doc_ref = firestore_client.collection("messages").add({"original": original})
+    conversation = [{"role": "user", "content": "Placeholder history"}]
+
+    # TODO: update system prompt and include the scholarship info
+    system_prompt = {"role": "system", "content": "Placeholder Prompt"}
+    chat_history = [system_prompt]
+    chat_history.extend(conversation)
+    # TODO: Remove this line after you get message history
+    chat_history.append({"role": "user", "content": "Why is the sky blue?"})
+
+    response: ChatResponse = ollama.chat(
+        model="llama3.2:3b",
+        messages=chat_history,
+    )
 
     # Send back a message that we've successfully written the message
-    return https_fn.Response(f"Message with ID {doc_ref.id} added.")
+    return https_fn.Response(f"Response: {response.message.content}")
 
 
 @firestore_fn.on_document_created(document="messages/{pushId}")
-def makeuppercase(
+def resumehelp(
     event: firestore_fn.Event[firestore_fn.DocumentSnapshot | None],
 ) -> None:
     """Listens for new documents to be added to /messages. If the document has
