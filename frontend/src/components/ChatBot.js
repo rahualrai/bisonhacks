@@ -17,7 +17,9 @@ const ChatBot = () => {
   const [chatLog, setChatLog] = useState([]);
   const [time, setTime] = useState(0);
   const navigate = useNavigate();
-
+  const urlOutsideSearchString = window.location.search;
+  const paramsOutside = new URLSearchParams(urlOutsideSearchString);
+  const scholarship_name= paramsOutside.get("scholarship_name")
   useEffect(() => {
     // Initialize chat with a single bot message
     setChatLog([{ role: 'model', content: defaultIntroText }]);
@@ -34,6 +36,7 @@ const ChatBot = () => {
     const urlSearchString = window.location.search;
     const params = new URLSearchParams(urlSearchString);
     const scholarship_id = params.get("scholarshipId")
+    const scholarship_name= params.get("scholarship_name")
 
     const url = "http://localhost:5001/bisonhack-9f9a6/us-central1/aihelp";
     const userId = "4auyMYAj7QSYuLlLRppHtGvSkoj1" // Fallback for user ID if not logged in
@@ -109,7 +112,7 @@ const ChatBot = () => {
   return (
     <div className="chatbot-container">
       {/* Heading outside or above the main box */}
-      <h2 className="chatbot-header">Trust Us</h2>
+      <h3 className="chatbot-header">{scholarship_name} Coach</h3>
 
       {/* Single unified "card" that holds everything */}
       <div className="chatbot-card">
@@ -130,8 +133,8 @@ const ChatBot = () => {
               className={`chat-message ${entry.role === 'user' ? 'user-message' : 'bot-message'
                 }`}
             >
-              <div className="message-bubble">
-                <strong>{entry.role}:</strong> <ReactMarkDown>{entry.content}</ReactMarkDown>
+              <div className="message-bubble" flex>
+                <strong>{ entry.role === "model"? "iBot"  : "User"}:</strong> <ReactMarkDown>{entry.content}</ReactMarkDown>
               </div>
             </div>
           ))}

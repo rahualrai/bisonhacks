@@ -1,6 +1,6 @@
 import React from "react"
 import { motion } from "framer-motion"
-import { ArrowRight, BookOpen, Clock, Search } from "lucide-react"
+import { ArrowRight, BookOpen, Bot, Search } from "lucide-react"
 
 /**
  * Framer Motion variant generator
@@ -25,7 +25,7 @@ export default function Home() {
       >
         <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
           <span style={{ fontSize: "1.125rem", fontWeight: 500 }}>
-            iScholar
+            iScholars
           </span>
         </div>
 
@@ -58,6 +58,7 @@ export default function Home() {
           textAlign: "center",
         }}
       >
+
         {/* <motion.a
           href="/download"
           {...getTitleAnimation(0.2)}
@@ -526,40 +527,9 @@ export default function Home() {
               </p>
             </motion.div>
 
-            {/* Step 2 */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: 1.1 }}
-              style={{
-                display: "flex",
-                flexDirection: "column",
-                alignItems: "center",
-              }}
-            >
-              <div
-                style={{
-                  marginBottom: "24px",
-                  display: "flex",
-                  height: "64px",
-                  width: "64px",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  borderRadius: "9999px",
-                  backgroundColor: "#e8f1ff",
-                }}
-              >
-                <BookOpen size={32} color="#ff6b6b" />
-              </div>
-              <h3 style={{ marginBottom: "8px", fontSize: "1.25rem" }}>
-                Get AI Assistance
-              </h3>
-              <p style={{ color: "#4B5563" }}>
-                Receive personalized essay help and application tips
-              </p>
-            </motion.div>
+            
 
-            {/* Step 3 */}
+            {/* Step 2 */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
@@ -582,13 +552,47 @@ export default function Home() {
                   backgroundColor: "#e8f1ff",
                 }}
               >
-                <Clock size={32} color="#ff6b6b" />
+                <BookOpen size={32} color="#ff6b6b" />
               </div>
               <h3 style={{ marginBottom: "8px", fontSize: "1.25rem" }}>
-                Track Progress
+                Get Scholarship Matches
               </h3>
               <p style={{ color: "#4B5563" }}>
-                Stay on top of deadlines and application status
+                Get a list of personalized scholarships that fit your profile
+              </p>
+            </motion.div>
+
+
+            {/* Step 3 */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 1.1 }}
+              style={{
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "center",
+              }}
+            >
+              <div
+                style={{
+                  marginBottom: "24px",
+                  display: "flex",
+                  height: "64px",
+                  width: "64px",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  borderRadius: "9999px",
+                  backgroundColor: "#e8f1ff",
+                }}
+              >
+                <Bot size={32} color="#ff6b6b" />
+              </div>
+              <h3 style={{ marginBottom: "8px", fontSize: "1.25rem" }}>
+                Get AI Assistance
+              </h3>
+              <p style={{ color: "#4B5563" }}>
+                Receive personalized essay help and application tips
               </p>
             </motion.div>
           </div>

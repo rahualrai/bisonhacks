@@ -7,6 +7,7 @@ import { useUser } from "../context/UserContext"
 import "../Auth.css"
 import "./Scholarship.css"
 import axios from "axios"
+import { Route } from "lucide-react"
 
 // Updated mock scholarship data (requirements field still exists but isn't used)
 const scholarships = [
@@ -123,7 +124,7 @@ const Welcome = () => {
   // }
 
   // --- Function to handle AI button click ---
-  const handleAIChat = (scholarshipId) => {
+  const handleAIChat = (scholarshipId, scholarship_name) => {
     const userId = user?.uid || "guest" // Fallback for user ID if not logged in
 
     //  Console logging userId and scholarshipId
@@ -132,7 +133,7 @@ const Welcome = () => {
     console.log("Scholarship ID:", scholarshipId)
 
     //  Navigate to chatbot page with parameters
-    const chatUrl = `/chatbot?userId=${userId}&scholarshipId=${scholarshipId}`;
+    const chatUrl = `/chatbot?userId=${userId}&scholarshipId=${scholarshipId}&scholarship_name=${scholarship_name}`;
     window.open(chatUrl, "_blank");
 
 
@@ -228,7 +229,7 @@ const Welcome = () => {
     <div className="app">
       <nav className="navbar">
         <div className="navbar-content">
-          <div className="logo">iScholar</div>
+          <div className="logo">iScholars</div>
           <div className="navbar-right">
             <div className="user-greeting">
               Welcome back, <span>{user.name}</span>
@@ -251,14 +252,14 @@ const Welcome = () => {
                 <h3>{sch.scholarship_name}</h3>
                 <p className="no-essay">No essay</p>
                 <div className="amount">${sch.amount.toLocaleString()}</div>
-                <button className="apply-button">
+                <button className="apply-button" onClick={() => window.open(sch.link, "_blank")}>
                   Apply Now <span>→</span>
                 </button>
 
                 {/* --- AI Button in bottom-right --- */}
                 <button
                   className="ai-button"
-                  onClick={() => handleAIChat(sch.scholarship_id)}
+                  onClick={() => handleAIChat(sch.scholarship_id, sch.scholarship_name)}
                 >
                   <img src={require("../assets/ai.png")} alt="AI" />
                 </button>
@@ -336,14 +337,14 @@ const Welcome = () => {
                     </div>
                     <div className="scholarship-action">
                       <div className="amount">${scholarship.amount.toLocaleString()}</div>
-                      <button className="apply-button">Apply now</button>
+                      <button className="apply-button" onClick={() => window.open(scholarship.link, "_blank")}>Apply now</button>
                     </div>
                   </div>
 
                   {/* --- AI Button in bottom-right --- */}
                   <button
                     className="ai-button"
-                    onClick={() => handleAIChat(scholarship.scholarship_id)}
+                    onClick={() => handleAIChat(scholarship.scholarship_id, scholarship.scholarship_name)}
                   >
                     <img src={require("../assets/ai.png")} alt="AI" />
                   </button>

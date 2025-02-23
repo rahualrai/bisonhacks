@@ -1,4 +1,3 @@
-// src/components/ProfileForm.js
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { auth, db } from '../firebase';
@@ -16,6 +15,8 @@ const ProfileForm = () => {
     gender: '',
     major: '',
     classification: '',
+    disability: '',    // new field for disability question (boolean)
+    lgbtqa: '',        // new field for LGBTQA+ community (boolean)
     need_based_aid: '',  // radio value to be stored as boolean
     merit_based_aid: '', // radio value to be stored as boolean
     international: '',   // radio value to be stored as boolean
@@ -23,9 +24,10 @@ const ProfileForm = () => {
     hbcu: '',            // radio value to be stored as boolean
   });
   const [submitting, setSubmitting] = useState(false);
+  
+  // Local state for resume file (uploaded but not used)
+  const [resumeFile, setResumeFile] = useState(null);
 
-  const [selectedFile, setSelectedFile] = useState(null);
-  const [fileText, setFileText] = useState("");
   // On mount, check if profile already exists for the current user
   useEffect(() => {
     const checkProfile = async () => {
@@ -40,22 +42,22 @@ const ProfileForm = () => {
     checkProfile();
   }, [navigate]);
 
-
-  const handleFileChange = (event) => {
-    setSelectedFile(event.target.files[0]);
-    const reader = new FileReader();
-  };
   // Handle change with type conversion for GPA and boolean fields
   const handleChange = (e) => {
     let { name, value } = e.target;
     if (name === 'gpa') {
       value = parseFloat(value);
     }
-    const booleanFields = ['need_based_aid', 'merit_based_aid', 'international', 'us_citizen', 'hbcu'];
+    const booleanFields = ['need_based_aid', 'merit_based_aid', 'international', 'us_citizen', 'hbcu', 'disability', 'lgbtqa'];
     if (booleanFields.includes(name)) {
       value = e.target.value === 'true';
     }
     setProfileData((prev) => ({ ...prev, [name]: value }));
+  };
+
+  // Resume file upload handler (does nothing beyond storing the file locally)
+  const handleFileChange = (e) => {
+    setResumeFile(e.target.files[0]);
   };
 
   const handleSubmit = async (e) => {
@@ -140,7 +142,6 @@ const ProfileForm = () => {
             />
           </label>
 
-
           <label>
             Gender
             <div className="radio-group">
@@ -178,7 +179,35 @@ const ProfileForm = () => {
           </label>
 
           <label>
-            Require Need Based Aid
+            Do you have a disability?
+            <div className="radio-group">
+              <label>
+                <input type="radio" name="disability" value="true" onChange={handleChange} required />
+                Yes
+              </label>
+              <label>
+                <input type="radio" name="disability" value="false" onChange={handleChange} />
+                No
+              </label>
+            </div>
+          </label>
+
+          <label>
+            Do you belong to the LGBTQA+ community?
+            <div className="radio-group">
+              <label>
+                <input type="radio" name="lgbtqa" value="true" onChange={handleChange} required />
+                Yes
+              </label>
+              <label>
+                <input type="radio" name="lgbtqa" value="false" onChange={handleChange} />
+                No
+              </label>
+            </div>
+          </label>
+
+          <label>
+            Do you require Need Based Aid?
             <div className="radio-group">
               <label>
                 <input
@@ -203,7 +232,7 @@ const ProfileForm = () => {
           </label>
 
           <label>
-            Require Merit Based Aid
+            Do you require Merit Based Aid?
             <div className="radio-group">
               <label>
                 <input
@@ -228,7 +257,7 @@ const ProfileForm = () => {
           </label>
 
           <label>
-            International
+            Are you an International student?
             <div className="radio-group">
               <label>
                 <input
@@ -253,7 +282,7 @@ const ProfileForm = () => {
           </label>
 
           <label>
-            US Citizen
+            Are you a US Citizen?
             <div className="radio-group">
               <label>
                 <input
@@ -278,7 +307,7 @@ const ProfileForm = () => {
           </label>
 
           <label>
-            HBCU/HSI
+            Do you go to HBCU/HSI?
             <div className="radio-group">
               <label>
                 <input
@@ -301,20 +330,23 @@ const ProfileForm = () => {
               </label>
             </div>
           </label>
+
           <label>
-            CV Upload
+            Upload Resume (PDF, DOC, or DOCX)
             <input
               type="file"
-              name="cv"
+              name="resumeFile"
+              accept=".pdf, .doc, .docx"
               onChange={handleFileChange}
-              required />
+            />
           </label>
+
           <button type="submit" className="profile-button" disabled={submitting}>
             {submitting ? 'Submitting...' : 'Submit Profile'}
           </button>
         </form>
       </div>
-    </div >
+    </div>
   );
 };
 
