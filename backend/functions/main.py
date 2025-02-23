@@ -224,5 +224,4 @@ def getscholarships(req: https_fn.Request) -> https_fn.Response:
     return https_fn.Response(
         json.dumps(api_response),
         mimetype="application/json",
-        headers={"Access-Control-Allow-Origin": "*"},
     )
