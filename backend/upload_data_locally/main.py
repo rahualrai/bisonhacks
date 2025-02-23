@@ -7,9 +7,7 @@ import os
 from google.cloud.firestore_v1.vector import Vector
 from firebase_admin import credentials
 
-cred = credentials.Certificate(
-    "../../../bisonhack-9f9a6-firebase-adminsdk-fbsvc-f36ca725d1.json"
-)
+
 app = initialize_app()
 firestore_client: google.cloud.firestore.Client = firestore.client()
 
