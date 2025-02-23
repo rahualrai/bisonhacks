@@ -15,15 +15,15 @@ const ChatBot = () => {
   const navigate = useNavigate(); // Changed from useRouter to useNavigate
 
   useEffect(() => {
-    setChatLog([{ sender: 'ISCHOLAR', message: defaultIntroText }])
+    setChatLog([{ role: 'model', content: defaultIntroText }])
 
     const timer = setInterval(() => setTime(prev => prev + 1), 1000);
     return () => clearInterval(timer);
   }, []);
 
   const fetchBotResponse = async (query, recentISCHOLARQuestion) => {
-    const phoneNumber = 123;
-    if (!phoneNumber) return { answer: "No phone number provided" };
+    const uid = 123;
+    if (!uid) return { answer: "No phone number provided" };
 
     try {
       const response = await fetch("http://localhost:8000/gemini_response", {
@@ -32,8 +32,8 @@ const ChatBot = () => {
         body: JSON.stringify({
           query,
           recentISCHOLARQuestion,
-          phoneNumber,
-          chat_history: chatLog.map(({ sender, message }) => ({ sender, message }))
+          uid,
+          conversation: chatLog.map(({ role, content }) => ({ role, content }))
         })
       });
 
@@ -57,22 +57,22 @@ const ChatBot = () => {
 
     // Add user message
     setChatLog(prev => [...prev, { 
-      sender: "User", 
-      message: userInput 
+      role: "user", 
+      content: userInput 
     }]);
 
 
     const recentISCHOLARMessage = [...chatLog]
       .reverse()
-      .find(entry => entry.sender === "ISCHOLAR")?.message;
+      .find(entry => entry.role === "model")?.content;
 
     if (!recentISCHOLARMessage) return;
 
     // Get and add bot response
     const response = await fetchBotResponse(userInput, recentISCHOLARMessage);
     setChatLog(prev => [...prev, { 
-      sender: "ISCHOLAR", 
-      message: response.answer 
+      role: "model", 
+      content: response.answer 
     }]);
     setUserInput("");
   };
@@ -103,11 +103,11 @@ const ChatBot = () => {
           <div 
             key={index} 
             className={`chat-message ${
-              entry.sender === 'User' ? 'user-message' : 'bot-message'
+              entry.role === 'user' ? 'user-message' : 'bot-message'
             }`}
           >
             <div className="message-bubble">
-              <strong>{entry.sender}:</strong> {entry.message}
+              <strong>{entry.role}:</strong> {entry.content}
             </div>
           </div>
         ))}
