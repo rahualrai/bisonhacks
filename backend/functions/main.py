@@ -11,7 +11,11 @@ import json
 from dotenv import load_dotenv
 import os
 from firebase_functions.params import IntParam, StringParam
+from firebase_admin import credentials
 
+cred = credentials.Certificate(
+    "../../../bisonhack-9f9a6-firebase-adminsdk-fbsvc-f36ca725d1.json"
+)
 load_dotenv()
 GEMINI_API_KEY = StringParam("GEMINI_API_KEY")
 # Generation configuration
@@ -22,7 +26,7 @@ generation_config = {
     "max_output_tokens": 2048,
 }
 gemini_client = genai.Client(api_key=GEMINI_API_KEY.value)
-app = initialize_app()
+app = initialize_app(cred)
 firestore_client: google.cloud.firestore.Client = firestore.client()
 
 
@@ -38,7 +42,7 @@ def askaboutscholarship(req: https_fn.Request) -> https_fn.Response:
         return https_fn.Response("Bad Request", status=400)
 
     # TODO: Remove UID after we provide real uid
-    uid = "DayzkNMrtmqsjO5Wb8zV"
+    uid = "4auyMYAj7QSYuLlLRppHtGvSkoj1"
     doc_ref = firestore_client.collection("userProfiles").document(uid)
 
     doc = doc_ref.get()

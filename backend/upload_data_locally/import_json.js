@@ -1,11 +1,9 @@
 // importData.js
 const admin = require('firebase-admin');
-const serviceAccount = require('../../bisonhack-9f9a6-firebase-adminsdk-fbsvc-f36ca725d1.json'); // Path to your service account key
 const data = require('./new_scholarships.json');
 
-admin.initializeApp({
-  credential: admin.credential.cert(serviceAccount)
-});
+admin.initializeApp(
+);
 
 const db = admin.firestore();
 
