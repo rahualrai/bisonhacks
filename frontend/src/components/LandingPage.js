@@ -58,7 +58,7 @@ export default function Home() {
           textAlign: "center",
         }}
       >
-        <motion.a
+        {/* <motion.a
           href="/download"
           {...getTitleAnimation(0.2)}
           style={{
@@ -77,7 +77,7 @@ export default function Home() {
         >
           Beta is now available!
           <ArrowRight size={16} />
-        </motion.a>
+        </motion.a> */}
 
         <div style={{ marginBottom: "80px", maxWidth: "960px" }}>
           <h1
