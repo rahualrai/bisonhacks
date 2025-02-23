@@ -5,6 +5,8 @@ from firebase_functions import firestore_fn, https_fn
 from firebase_admin import initialize_app, firestore
 from google import genai
 import google.cloud.firestore
+from google.cloud.firestore_v1 import vector_query
+from google.cloud.firestore_v1.base_vector_query import DistanceMeasure
 import ollama
 from ollama import ChatResponse
 import json
@@ -89,3 +91,88 @@ def aiapply(
     print(f"Uppercasing {event.params['pushId']}: {original}")
     upper = original.upper()
     event.data.reference.update({"uppercase": upper})
+
+
+@https_fn.on_request()
+def getscholarships(req: https_fn.Request) -> https_fn.Response:
+    # Grab the text parameter.
+    data = req.form
+
+    # get the data from the form
+    # user_id
+    try:
+        uid = data["uid"]
+    except:
+        return https_fn.Response("Bad Request", status=400)
+    # get user profile
+    doc_ref = firestore_client.collection("userProfiles").document(uid)
+    doc = doc_ref.get()
+    profile = doc.to_dict()
+
+    filters = [
+        ("classification", "in", ["Any", "Junior"]),
+        ("gender", "in", ["Any", "Male"]),
+        ("gpa", "<=", 4),
+        ("major", "in", ["Any", "Computer Science"]),
+        ("need_based_aid", "==", True),
+        ("origin_country", "in", ["Any", "Nepal"]),
+        ("race", "in", ["Any", "Asian"]),
+        ("us_citizen", "==", False),
+    ]
+    # create the filter criterias for the scholarships
+    scholarship_ref = firestore_client.collection("scholarships")
+
+    query = (
+        scholarship_ref.where(
+            filter=google.cloud.firestore.FieldFilter(
+                "classification", "in", ["Any", "Junior"]
+            ),
+        )
+        .where(
+            filter=google.cloud.firestore.FieldFilter("gender", "!=", "Female"),
+        )
+        .where(
+            filter=google.cloud.firestore.FieldFilter("gpa", "<=", 4),
+        )
+        .where(
+            filter=google.cloud.firestore.FieldFilter(
+                "major", "in", ["Any", "Computer Science"]
+            ),
+        )
+        .where(
+            filter=google.cloud.firestore.FieldFilter("need_based_aid", "==", True),
+        )
+        .where(
+            filter=google.cloud.firestore.FieldFilter(
+                "origin_country", "in", ["Any", "Nepal"]
+            ),
+        )
+        .where(
+            filter=google.cloud.firestore.FieldFilter("race", "in", ["Any", "Asian"]),
+        )
+        .where(
+            filter=google.cloud.firestore.FieldFilter("us_citizen", "==", False),
+        )
+    )
+
+    vector_query = query.find_nearest(
+        vector_field="description_embeddings",
+        query_vector=profile["resume_embeddings"],
+        distance_measure=DistanceMeasure.COSINE,
+        limit=20,
+    )
+
+    docs = vector_query.stream()
+
+    response = []
+    for doc in docs:
+        doc_dict = doc.to_dict()
+        del doc_dict["description_embeddings"]
+        del doc_dict["international"]
+        response.append(doc_dict)
+        print(doc_dict["description"])
+
+    # do a vector similarity serch top 20 from the  scholarships
+    api_response = {"scholarships": response}
+
+    return https_fn.Response(json.dumps(api_response))
