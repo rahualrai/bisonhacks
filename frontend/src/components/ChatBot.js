@@ -35,7 +35,7 @@ const ChatBot = () => {
     const params = new URLSearchParams(urlSearchString);
     const scholarship_id = params.get("scholarshipId")
 
-    const url = "https://us-central1-bisonhack-9f9a6.cloudfunctions.net/aihelp";
+    const url = "http://localhost:5001/bisonhack-9f9a6/us-central1/aihelp";
     const userId = "4auyMYAj7QSYuLlLRppHtGvSkoj1" // Fallback for user ID if not logged in
 
     const form = new FormData();

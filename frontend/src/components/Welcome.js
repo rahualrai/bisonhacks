@@ -139,7 +139,7 @@ const Welcome = () => {
   }
 
   useEffect(() => {
-    const url = "https://us-central1-bisonhack-9f9a6.cloudfunctions.net/getscholarships";
+    const url = "http://localhost:5001/bisonhack-9f9a6/us-central1/getscholarships";
     const userId = "4auyMYAj7QSYuLlLRppHtGvSkoj1" // Fallback for user ID if not logged in
 
     const form = new FormData();
