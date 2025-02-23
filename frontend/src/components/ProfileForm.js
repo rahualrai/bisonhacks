@@ -24,6 +24,8 @@ const ProfileForm = () => {
   });
   const [submitting, setSubmitting] = useState(false);
 
+  const [selectedFile, setSelectedFile] = useState(null);
+  const [fileText, setFileText] = useState("");
   // On mount, check if profile already exists for the current user
   useEffect(() => {
     const checkProfile = async () => {
@@ -38,6 +40,11 @@ const ProfileForm = () => {
     checkProfile();
   }, [navigate]);
 
+
+  const handleFileChange = (event) => {
+    setSelectedFile(event.target.files[0]);
+    const reader = new FileReader();
+  };
   // Handle change with type conversion for GPA and boolean fields
   const handleChange = (e) => {
     let { name, value } = e.target;
@@ -294,13 +301,20 @@ const ProfileForm = () => {
               </label>
             </div>
           </label>
-
+          <label>
+            CV Upload
+            <input
+              type="file"
+              name="cv"
+              onChange={handleFileChange}
+              required />
+          </label>
           <button type="submit" className="profile-button" disabled={submitting}>
             {submitting ? 'Submitting...' : 'Submit Profile'}
           </button>
         </form>
       </div>
-    </div>
+    </div >
   );
 };
 
