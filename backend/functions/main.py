@@ -7,6 +7,7 @@ from google import genai
 import google.cloud.firestore
 from google.cloud.firestore_v1 import vector_query
 from google.cloud.firestore_v1.base_vector_query import DistanceMeasure
+from google.genai.chats import Content, Part
 import ollama
 from ollama import ChatResponse
 import json
@@ -15,9 +16,7 @@ import os
 from firebase_functions.params import IntParam, StringParam
 from firebase_admin import credentials
 
-cred = credentials.Certificate(
-    "../../../bisonhack-9f9a6-firebase-adminsdk-fbsvc-f36ca725d1.json"
-)
+
 load_dotenv()
 GEMINI_API_KEY = StringParam("GEMINI_API_KEY")
 # Generation configuration
@@ -28,69 +27,111 @@ generation_config = {
     "max_output_tokens": 2048,
 }
 gemini_client = genai.Client(api_key=GEMINI_API_KEY.value)
-app = initialize_app(cred)
+app = initialize_app()
 firestore_client: google.cloud.firestore.Client = firestore.client()
 
 
 @https_fn.on_request()
-def askaboutscholarship(req: https_fn.Request) -> https_fn.Response:
+def aihelp(req: https_fn.Request) -> https_fn.Response:
     # Grab the text parameter.
     data = req.form
 
     try:
         uid = data["uid"]
-        conversation = data["conversation"]
+        scholarship_id = data["scholarship_id"]
+        conversations = json.loads(str(data["conversations"]))
     except:
         return https_fn.Response("Bad Request", status=400)
 
-    # TODO: Remove UID after we provide real uid
-    uid = "4auyMYAj7QSYuLlLRppHtGvSkoj1"
+    # resume
     doc_ref = firestore_client.collection("userProfiles").document(uid)
-
     doc = doc_ref.get()
-    # TODO: Use profile in chat history
     profile = doc.to_dict()
-    print(profile)
+    del profile["resume_embeddings"]
+    del profile["uid"]
+    profile_string = ""
+    for profile_key, profile_value in zip(profile.keys(), profile.values()):
+        profile_string += f"{profile_key}: {profile_value}\n"
 
-    conversation = [{"role": "user", "content": "Placeholder history"}]
+    # scholarship
+    scholarship_ref = firestore_client.collection("scholarships").document(
+        scholarship_id
+    )
+    scholarship_doc = scholarship_ref.get()
+    scholarship = scholarship_doc.to_dict()
+
+    scholarship_string = ""
+    del scholarship["description_embeddings"]
+    for scholarship_key, scholarship_value in zip(
+        scholarship.keys(), scholarship.values()
+    ):
+        scholarship_string += f"{scholarship_key}: {scholarship_value}\n"
 
     # TODO: update system prompt and include the scholarship info
-    system_prompt = {"role": "system", "content": "Placeholder Prompt"}
-    chat_history = [system_prompt]
-    chat_history.extend(conversation)
-    # TODO: Remove this line after you get message history
-    chat_history.append({"role": "user", "content": "Why is the sky blue?"})
+    system_prompt = f"""
+You are an expert scholarship application assistant. Your goal is to guide and support users in crafting compelling scholarship applications based on their provided user profile and scholarship information.
 
-    response = gemini_client.models.generate_content(
-        model="gemini-2.0-flash", contents="Why is the sky blue?"
+**Your Role:**
+
+1.  **Understand the Context:**
+    * **User Profile:** You will receive a user profile containing information about the user's academic achievements, extracurricular activities, skills, experiences, and personal background. \n {profile_string} \n
+    * **Scholarship Information:** You will receive scholarship information, including eligibility criteria, essay prompts, required documents, and deadlines. {scholarship_string} \n
+2.  **Analyze and Strategize:**
+    * Carefully analyze the user's profile and the scholarship requirements to identify key connections and strengths.
+    * Determine how the user's experiences and skills align with the scholarship's goals and values.
+3.  **Essay Assistance:**
+    * Help the user brainstorm ideas for their essays based on their profile and the essay prompts.
+    * Provide guidance on structuring essays, developing compelling arguments, and showcasing the user's unique qualities.
+    * Offer suggestions for improving the clarity, conciseness, and impact of the user's writing.
+    * Generate essay drafts based on the user profile and scholarship requirements, which the user can then edit and refine.
+4.  **Resume Creation:**
+    * Create tailored resumes that highlight the user's relevant skills and experiences for the specific scholarship.
+    * Organize the resume information in a clear and professional format.
+    * Emphasize achievements and experiences that align with the scholarship's criteria.
+5.  **Application Guidance:**
+    * Provide clear instructions on how to complete the application form and submit required documents.
+    * Offer tips for maximizing the user's chances of success.
+    * Remind the user of upcoming deadlines.
+6.  **Maintain a Conversational Tone:**
+    * Engage with the user in a friendly and supportive manner.
+    * Ask clarifying questions to ensure you understand their needs and preferences.
+    * Provide personalized feedback and suggestions.
+7.  **Ethical Considerations:**
+    * Never fabricate information or misrepresent the user's qualifications.
+    * Ensure all generated content is based on the provided user profile.
+    * Clearly state that you are an AI assistant and that the user is responsible for the final application submission.
+
+**Instructions for Interaction:**
+
+1.  **User Input:** The user will provide their profile and the scholarship information.
+2.  **Your Response:**
+    * Begin by acknowledging the user's input and summarizing the scholarship requirements.
+    * Ask clarifying questions as needed.
+    * Provide step-by-step guidance on the application process.
+    * Generate essay drafts and resume drafts as requested.
+    * Offer specific and actionable feedback.
+
+**Example Interaction Flow:**
+
+* **User:** "Here is my profile and the scholarship information for the [Scholarship Name]."
+* **You:** "Thank you! I've reviewed your profile and the [Scholarship Name] information. It looks like they're looking for students with strong [key criteria]. I see you have experience in [relevant experience]. To start, let's brainstorm some ideas for the first essay prompt: [essay prompt]. What aspects of your experience do you think best address this prompt?"
+
+By following these guidelines, you will be able to effectively assist users in crafting successful scholarship applications.
+"""
+    final_message = conversations.pop()["content"]
+
+    history = []
+    for part in conversations:
+        history.append(Content(parts=[Part(text=part["content"])], role=part["role"]))
+
+    chat = gemini_client.chats.create(
+        model="gemini-2.0-flash", config={"system_instruction": system_prompt}
     )
+    response = chat.send_message(final_message)
     api_response = {"response": response.text}
 
     # Send back a message that we've successfully written the message
-    return https_fn.Response(json.dumps(api_response))
-
-
-@firestore_fn.on_document_created(document="messages/{pushId}")
-def aiapply(
-    event: firestore_fn.Event[firestore_fn.DocumentSnapshot | None],
-) -> None:
-    """Listens for new documents to be added to /messages. If the document has
-    an "original" field, creates an "uppercase" field containg the contents of
-    "original" in upper case."""
-
-    # Get the value of "original" if it exists.
-    if event.data is None:
-        return
-    try:
-        original = event.data.get("original")
-    except KeyError:
-        # No "original" field, so do nothing.
-        return
-
-    # Set the "uppercase" field.
-    print(f"Uppercasing {event.params['pushId']}: {original}")
-    upper = original.upper()
-    event.data.reference.update({"uppercase": upper})
+    return https_fn.Response(json.dumps(api_response), mimetype="application/json")
 
 
 @https_fn.on_request()
@@ -109,16 +150,6 @@ def getscholarships(req: https_fn.Request) -> https_fn.Response:
     doc = doc_ref.get()
     profile = doc.to_dict()
 
-    filters = [
-        ("classification", "in", ["Any", "Junior"]),
-        ("gender", "in", ["Any", "Male"]),
-        ("gpa", "<=", 4),
-        ("major", "in", ["Any", "Computer Science"]),
-        ("need_based_aid", "==", True),
-        ("origin_country", "in", ["Any", "Nepal"]),
-        ("race", "in", ["Any", "Asian"]),
-        ("us_citizen", "==", False),
-    ]
     # create the filter criterias for the scholarships
     scholarship_ref = firestore_client.collection("scholarships")
 
@@ -170,9 +201,9 @@ def getscholarships(req: https_fn.Request) -> https_fn.Response:
         del doc_dict["description_embeddings"]
         del doc_dict["international"]
         response.append(doc_dict)
-        print(doc_dict["description"])
+        doc_dict["scholarship_id"] = doc.id
 
     # do a vector similarity serch top 20 from the  scholarships
     api_response = {"scholarships": response}
 
-    return https_fn.Response(json.dumps(api_response))
+    return https_fn.Response(json.dumps(api_response), mimetype="application/json")
