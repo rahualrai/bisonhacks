@@ -22,8 +22,9 @@ const ChatBot = () => {
   }, []);
 
   const fetchBotResponse = async (query, recentISCHOLARQuestion) => {
-    const uid = 123;
-    if (!uid) return { answer: "No phone number provided" };
+ 
+    const uid = sessionStorage.getItem('uid',"123");
+    const scholarshipId = sessionStorage.getItem('scholarshipId',"123");
 
     try {
       const response = await fetch("http://localhost:8000/gemini_response", {
