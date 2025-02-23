@@ -1,4 +1,4 @@
-# Canvas BisonHacks Project
+# BisonHacks Project
 This project is a full-stack application built with a Firebase-backed Python server and a React-based frontend. It processes scholarship data, provides AI-powered services, and enables users to interact via chat.
 
 ## Project Structure
