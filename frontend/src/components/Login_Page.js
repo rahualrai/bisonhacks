@@ -49,9 +49,9 @@ const Login_Page = () => {
   return (
     <div className="auth-wrapper">
       <div className="auth-card">
-        <div className="brand">YourLogo</div>
-        <h1 className="auth-title">Sign in</h1>
-        <p className="auth-subtitle">Use your account</p>
+        <div className="brand">iScholar</div>
+        <h1 className="auth-title">Welcome Back</h1>
+        <p className="auth-subtitle">Sign in to continue your journey</p>
 
         <form onSubmit={handleSubmit} className="auth-form">
           <label className="input-label">
@@ -79,21 +79,27 @@ const Login_Page = () => {
           </label>
 
           <div className="links-row">
-            <a href="#forgot-email" className="small-link">Forgot email?</a>
-            <a href="#forgot-password" className="small-link">Forgot password?</a>
+            <a href="#forgot-email" className="small-link">
+              Forgot email?
+            </a>
+            <a href="#forgot-password" className="small-link">
+              Forgot password?
+            </a>
           </div>
 
-          <button type="submit" className="auth-button">Next</button>
+          <button type="submit" className="auth-button">
+            Sign In
+          </button>
         </form>
 
         <button onClick={handleGoogleSignIn} className="auth-button google-button">
-          <FaGoogle style={{ marginRight: '8px', fontSize: '18px' }} />
+          <FaGoogle />
           Sign in with Google
         </button>
 
-        <div style={{ marginTop: '20px', fontSize: '14px', color: '#5f6368' }}>
+        <div className="create-account">
           Don't have an account?{' '}
-          <Link to="/signup" style={{ color: '#1a73e8', textDecoration: 'none' }}>
+          <Link to="/signup">
             Create account
           </Link>
         </div>

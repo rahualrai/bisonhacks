@@ -1,0 +1,271 @@
+.landing-page {
+  min-height: 100vh;
+  background-color: #faf7f2;
+}
+
+.nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem 1.5rem;
+}
+
+@media (min-width: 768px) {
+  .nav {
+    padding: 1rem 3rem;
+  }
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 1.125rem;
+  font-weight: 500;
+}
+
+.login-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background-color: black;
+  color: white;
+  padding: 0.5rem 1.5rem;
+  border-radius: 9999px;
+  text-decoration: none;
+  transition: background-color 0.3s;
+}
+
+.login-btn:hover {
+  background-color: rgba(0, 0, 0, 0.9);
+}
+
+.header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 8rem 1.5rem;
+  text-align: center;
+}
+
+.beta-badge {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 2.5rem;
+  padding: 0.25rem 1rem;
+  background-color: black;
+  color: white;
+  border: 2px solid black;
+  border-radius: 9999px;
+  text-decoration: none;
+  font-size: 0.875rem;
+  transition: all 0.3s;
+}
+
+.beta-badge:hover {
+  background-color: white;
+  color: black;
+}
+
+.title-container {
+  max-width: 72rem;
+  margin-bottom: 5rem;
+}
+
+.title {
+  font-family: serif;
+  font-size: 3.75rem;
+  line-height: 1.2;
+}
+
+@media (min-width: 768px) {
+  .title {
+    font-size: 6rem;
+  }
+}
+
+.highlight {
+  color: #ff6b6b;
+  font-style: italic;
+}
+
+.subtitle {
+  margin-top: 1.5rem;
+  font-size: 1.125rem;
+  color: #666;
+}
+
+.cta-container {
+  margin-top: 2.5rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+}
+
+@media (min-width: 640px) {
+  .cta-container {
+    flex-direction: row;
+  }
+}
+
+.primary-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  width: 100%;
+  padding: 0.75rem 2rem;
+  background-color: black;
+  color: white;
+  border-radius: 9999px;
+  text-decoration: none;
+  transition: background-color 0.3s;
+}
+
+@media (min-width: 640px) {
+  .primary-btn {
+    width: auto;
+  }
+}
+
+.primary-btn:hover {
+  background-color: rgba(0, 0, 0, 0.9);
+}
+
+.secondary-btn {
+  width: 100%;
+  padding: 0.75rem 2rem;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  border-radius: 9999px;
+  text-decoration: none;
+  color: black;
+  transition: background-color 0.3s;
+}
+
+@media (min-width: 640px) {
+  .secondary-btn {
+    width: auto;
+  }
+}
+
+.secondary-btn:hover {
+  background-color: rgba(0, 0, 0, 0.05);
+}
+
+.features-section {
+  padding: 6rem 1.5rem;
+  text-align: center;
+}
+
+.features-title {
+  font-family: serif;
+  font-size: 3rem;
+  margin-bottom: 1.5rem;
+}
+
+@media (min-width: 768px) {
+  .features-title {
+    font-size: 3.75rem;
+  }
+}
+
+.features-description {
+  max-width: 48rem;
+  margin: 0 auto;
+  font-size: 1.125rem;
+  color: #666;
+}
+
+.features-list {
+  margin-top: 2.5rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2rem;
+}
+
+@media (min-width: 640px) {
+  .features-list {
+    flex-direction: row;
+    justify-content: center;
+  }
+}
+
+.feature-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.check-icon {
+  color: #22c55e;
+}
+
+.how-it-works {
+  padding: 6rem 1.5rem;
+}
+
+.how-it-works-container {
+  max-width: 64rem;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.how-it-works-title {
+  font-family: serif;
+  font-size: 2.5rem;
+  margin-bottom: 4rem;
+}
+
+@media (min-width: 768px) {
+  .how-it-works-title {
+    font-size: 3rem;
+  }
+}
+
+.steps-grid {
+  display: grid;
+  gap: 4rem;
+}
+
+@media (min-width: 768px) {
+  .steps-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+.step {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.step-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 4rem;
+  height: 4rem;
+  margin-bottom: 1.5rem;
+  background-color: #e8f1ff;
+  border-radius: 9999px;
+}
+
+.step-icon svg {
+  width: 2rem;
+  height: 2rem;
+  color: #ff6b6b;
+}
+
+.step-title {
+  font-size: 1.25rem;
+  font-weight: 500;
+  margin-bottom: 0.5rem;
+}
+
+.step-description {
+  color: #666;
+}

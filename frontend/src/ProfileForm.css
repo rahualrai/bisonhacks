@@ -1,41 +1,64 @@
 /* src/ProfileForm.css */
 
 /* Container styles similar to Auth.css */
+
+
+/* Reset and base styles */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+    "Helvetica Neue", Arial, sans-serif;
+  background-color: #faf7f2;
+  color: black;
+  line-height: 1.5;
+}
+
+/* Layout */
 .profile-wrapper {
   display: flex;
   flex-direction: column;
   min-height: 100vh;
   align-items: center;
   justify-content: center;
-  background-color: #f1f3f4;
-  padding: 20px;
+  background-color: #faf7f2;
+  padding: 2rem;
 }
 
+/* Profile Card */
 .profile-card {
-  background-color: #fff;
+  background-color: white;
   width: 500px;
   max-width: 90%;
-  padding: 40px;
-  border-radius: 8px;
-  box-shadow: 0 1px 6px rgba(0, 0, 0, 0.2);
+  padding: 2rem;
+  border-radius: 16px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  transition: all 0.3s ease;
 }
 
 .profile-card h2 {
-  font-size: 24px;
-  margin-bottom: 20px;
-  color: #202124;
+  font-size: 2rem;
+  margin-bottom: 1rem;
+  text-align: center;
+  font-weight: 600;
+  color: black;
 }
 
-/* Form elements */
+/* Form Styling */
 .profile-form {
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 1rem;
 }
 
 .profile-form label {
-  font-size: 14px;
-  color: #202124;
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: black;
   display: flex;
   flex-direction: column;
 }
@@ -43,38 +66,60 @@
 .profile-form input[type="text"],
 .profile-form input[type="number"] {
   margin-top: 6px;
-  padding: 10px;
-  font-size: 16px;
-  border: 1px solid #dadce0;
-  border-radius: 4px;
+  padding: 0.75rem;
+  font-size: 1rem;
+  border: 2px solid black;
+  border-radius: 12px;
+  background-color: white;
+  transition: all 0.3s;
 }
 
-/* Radio groups */
+.profile-form input:focus {
+  outline: none;
+  border-color: #ff6b6b;
+}
+
+/* Radio Button Group */
 .radio-group {
   display: flex;
   align-items: center;
-  gap: 20px;
+  gap: 1.5rem;
   margin-top: 6px;
 }
 
 .radio-group label {
-  font-size: 14px;
-  color: #202124;
+  font-size: 0.9rem;
+  font-weight: normal;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 6px;
 }
 
-/* Submit button styling */
+/* Submit Button */
 .profile-button {
-  background-color: #1a73e8;
-  color: #fff;
-  border: none;
-  outline: none;
-  font-size: 16px;
-  padding: 12px;
-  border-radius: 4px;
+  background-color: black;
+  border: 2px solid black;
+  color: white;
+  font-size: 1rem;
+  font-weight: 500;
   cursor: pointer;
-  margin-top: 20px;
+  padding: 0.75rem 1.5rem;
+  border-radius: 9999px;
+  margin-top: 1.5rem;
+  transition: all 0.3s;
+  display: flex;
+  justify-content: center;
 }
 
 .profile-button:hover {
-  background-color: #1669c1;
+  background-color: white;
+  color: black;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .profile-card {
+    width: 90%;
+  }
 }

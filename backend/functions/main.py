@@ -1,5 +1,5 @@
 # The Cloud Functions for Firebase SDK to create Cloud Functions and set up triggers.
-from firebase_functions import firestore_fn, https_fn
+from firebase_functions import firestore_fn, https_fn, options
 
 # The Firebase Admin SDK to access Cloud Firestore.
 from firebase_admin import initialize_app, firestore
@@ -31,8 +31,15 @@ app = initialize_app()
 firestore_client: google.cloud.firestore.Client = firestore.client()
 
 
-@https_fn.on_request()
-def aihelp(req: https_fn.Request) -> https_fn.Response:
+@https_fn.on_request(
+    cors=options.CorsOptions(
+        cors_origins="*",  # Allows all origins
+        cors_methods=["get", "post", "options"],  # Allows specified methods
+    ),
+)
+def aihelp(
+    req: https_fn.Request,
+) -> https_fn.Response:
     # Grab the text parameter.
     data = req.form
 
@@ -43,6 +50,7 @@ def aihelp(req: https_fn.Request) -> https_fn.Response:
     except:
         return https_fn.Response("Bad Request", status=400)
 
+    print(scholarship_id)
     # resume
     doc_ref = firestore_client.collection("userProfiles").document(uid)
     doc = doc_ref.get()
@@ -61,13 +69,13 @@ def aihelp(req: https_fn.Request) -> https_fn.Response:
     scholarship = scholarship_doc.to_dict()
 
     scholarship_string = ""
+    print(scholarship.keys())
     del scholarship["description_embeddings"]
     for scholarship_key, scholarship_value in zip(
         scholarship.keys(), scholarship.values()
     ):
         scholarship_string += f"{scholarship_key}: {scholarship_value}\n"
 
-    # TODO: update system prompt and include the scholarship info
     system_prompt = f"""
 You are an expert scholarship application assistant. Your goal is to guide and support users in crafting compelling scholarship applications based on their provided user profile and scholarship information.
 
@@ -134,7 +142,12 @@ By following these guidelines, you will be able to effectively assist users in c
     return https_fn.Response(json.dumps(api_response), mimetype="application/json")
 
 
-@https_fn.on_request()
+@https_fn.on_request(
+    cors=options.CorsOptions(
+        cors_origins="*",  # Allows all origins
+        cors_methods=["get", "post", "options"],  # Allows specified methods
+    ),
+)
 def getscholarships(req: https_fn.Request) -> https_fn.Response:
     # Grab the text parameter.
     data = req.form
@@ -206,4 +219,8 @@ def getscholarships(req: https_fn.Request) -> https_fn.Response:
     # do a vector similarity serch top 20 from the  scholarships
     api_response = {"scholarships": response}
 
-    return https_fn.Response(json.dumps(api_response), mimetype="application/json")
+    return https_fn.Response(
+        json.dumps(api_response),
+        mimetype="application/json",
+        headers={"Access-Control-Allow-Origin": "*"},
+    )
