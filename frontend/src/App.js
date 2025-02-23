@@ -5,6 +5,7 @@ import Login_Page from './components/Login_Page';
 import Signup from './components/Signup';
 import ProfileForm from './components/ProfileForm';
 import Welcome from './components/Welcome';
+import ChatBot from './components/ChatBot';
 
 function App() {
   return (
@@ -15,6 +16,7 @@ function App() {
         <Route path="/signup" element={<Signup />} />
         <Route path="/profile" element={<ProfileForm />} />
         <Route path="/welcome" element={<Welcome />} />
+        <Route path="/chatbot" element={<ChatBot />} />
       </Routes>
     </Router>
   );
